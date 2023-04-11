@@ -1,0 +1,45 @@
+canvas {
+     border: 1px solid black;
+     }
+
+footer{
+    vertical-align: top;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding-bottom: 5px;
+    background-color: #F9E2AF;
+}
+#login-div{
+    /* display: none; */
+    width: 50%;
+    margin: 0 auto;
+    /* text-align: center; */
+}
+
+#login-div input{
+    width: 50%;
+    margin: 0 auto;
+}
+
+.gradient-custom-3 {
+    /* fallback for old browsers */
+    background: #84fab0;
+    
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: -webkit-linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5));
+    
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5))
+    }
+    .gradient-custom-4 {
+    /* fallback for old browsers */
+    background: #84fab0;
+    
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: -webkit-linear-gradient(to right, rgba(132, 250, 176, 1), rgba(143, 211, 244, 1));
+    
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(to right, rgba(132, 250, 176, 1), rgba(143, 211, 244, 1))
+    }
