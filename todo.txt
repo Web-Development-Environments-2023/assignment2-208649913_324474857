@@ -1,7 +1,15 @@
-* fix navbar menu to top when scrolling
+Requirements:
 * Add config section
-* switch screen to config-screen on successful login
-* Finish Validation of SignUp screen
 * Overall design and UI of the game
 * Add Icon of the game 
+* Check If new registed user can successfully log in 
+* Add implementations to About window (timer, instruction etc.)
+* Show score when the game is running
+* Add New Game option
+
+
+Fixes/Bugs:
+* fix navbar menu to top when scrolling
 * Fix About dialog exit on signin and sign up 
+* Fix enablePropButtons function, currently not working
+* Fix show Welcome {user} message.

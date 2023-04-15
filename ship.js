@@ -22,7 +22,9 @@ var bgsound;
 
 const sections_ids = ["#welcome-section", "#game-section", "#login-section", "#signup-section", "#config-section"]
 const testUser = {"username":"p","password":"testuser"};
-const all_users =[testUser];
+const users_passwords =[testUser];
+const all_registered_users = [];
+let loggedUser = "";
 
 function setupGame() {
   canvas = document.getElementById("theCanvas");
@@ -380,12 +382,19 @@ function drawBullet() {
 window.onload = setupGame;
 
 function switch_displays(switch_to_id){
-    sections_ids.forEach(section_id => {
+    switch_displays_setup();
+    sections_ids.forEach(section_id => {  
       if(section_id != switch_to_id)
         $(section_id).hide();
       else
         $(section_id).show()
     });
+}
+
+function switch_displays_setup(){
+  clearLoginInputs();
+  clearSignupInputs();
+  $('#successfulRegisterMsg').hide();
 }
 
 // About Modal Dialog
@@ -418,8 +427,7 @@ function handleLoginClick(){
     const usernameInput = username.val();
     const passwordInput = password.val();
     let loginSuccessful = false;
-    all_users.forEach(user => {
-      console.log("user registered: "+user.username+", " +user.password + "\n" + "input user: " +usernameInput + ", " + passwordInput);
+    users_passwords.forEach(user => {
       if(user.username == usernameInput && user.password == passwordInput){
         loginSuccessful = true;
         successfulLogin(user);
@@ -443,40 +451,90 @@ function failedLogin(){
 }
 
 function successfulLogin(user){
-  clearLoginInputs();
-  alert("Welcome "+user.username);
+  $("#loggedUserOptions").show();
+  $("#welcomeUserMsg").val("Welcome "+user.username);
+  enablePropButtons(false);
+  switch_displays("#config-section");
 }
 
 // SignUp Handling Methods:
+$(document).ready(function() {
 const signupForm = document.getElementById("signup-form");
 signupForm.addEventListener("submit", (event) => {
   event.preventDefault(); // prevent the form from refreshing the page
   // call your function to handle the form data here
 });
+});
 
 
 function handleRegisterClick(){
-  const fullName = $('#signup-input-fullName');
-  const username = $('#signup-input-userName');
-  const email = $('#signup-input-email');
-  const date = $('#signup-input-date');
-  const password = $('#signup-input-password');
-  const passwordRepeat = $('#signup-input-passwordrepeat');
-  let validSignup =true;
-  signupInputs = [fullName, username, email, date, password, password];
-  if (!validateNotEmpty)
-    return;
-  //TODO: Continue here
-
+  const fullName = $('#signup-input-fullName').val();
+  const username = $('#signup-input-userName').val();
+  const email = $('#signup-input-email').val();
+  const date = $('#signup-input-date').val();
+  const password = $('#signup-input-password').val();
+  const passwordRepeat = $('#signup-input-passwordrepeat').val();
+  signupInputs = [fullName, username, email, date, password, passwordRepeat];
+  if (!validateNotEmpty(signupInputs))
+    return false;
+  if(!validateFullname(fullName))
+    return false;
+  if(!validatePassword(password, passwordRepeat))
+    return false;
+  if(!validateUsername(username))
+    return false;
+  const new_user = {"full name":fullName, "username":username, "email": email, "date":date}
+  successfulRegister(new_user, password);
 }
 
 function validateNotEmpty(inputsArray){
-  signupInputs.forEach(input => {
-    if (input.val() == ''){
-      alert("Fields can't be empty,\nPlease fill all the fields")
-      return false;
+  let isValid = true; 
+  inputsArray.forEach(input => {
+    if (input == ''){
+      isValid = false;
     }
   });
+  if(!isValid)
+    alert("Fields can't be empty,\nPlease fill all the fields");
+  return isValid;
+}
+
+function validateFullname(name){
+    const regex = /^[^0-9]+$/;
+    if (!regex.test(name)) {
+      alert("Full name can't have numbers!");
+      return false;
+    }
+    return true;
+}
+
+function validateUsername(username){
+  let isValid = true;
+  users_passwords.forEach(user => {
+    if(user.username == username){
+      isValid = false;
+    }
+  });
+  if(!isValid)
+    alert("User name already exists please try different one");
+  return isValid;
+}
+
+function validatePassword(password, passwordRepeat){
+  if(password.length<8){
+    alert("Password must be at least 8 characters");
+    return false;
+  }
+  // regex for password to have both numbers and characters and only them
+  const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/;
+  if (!regex.test(password)) {
+    alert("Password must have at least one letter and at least one number");
+    return false;
+  }
+  if(password != passwordRepeat){
+    alert("Passwords must match !");
+    return false;
+  }
   return true;
 }
 
@@ -493,4 +551,27 @@ function clearSignupInputs(){
   date.val('');
   password.val('');
   passwordRepeat.val('');
+}
+
+function successfulRegister(newUser, password){
+  all_registered_users.push(newUser);
+  userPassword = {"username": newUser.username, "password":password};
+  users_passwords.push(userPassword);
+  switch_displays("#login-section");
+  $('#successfulRegisterMsg').show();
+}
+
+// Log out handling
+function logOut(){
+  loggedUser = "";
+  $("#loggedUserOptions").hide();
+  enablePropButtons(true);
+  switch_displays("#welcome-section");
+}
+
+// Affects Welcome, Login and Sign up buttons, for enabling pass true, for disabling pass false
+function enablePropButtons(val){
+  $("#navbarLoginBtn").prop("disabled", val);
+  $("#navbarSignupBtn").prop("disabled", val);
+  $("#navbarWelcomeBtn").prop("disabled", val);
 }

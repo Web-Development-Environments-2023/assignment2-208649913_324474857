@@ -88,3 +88,15 @@ height: 400px;
     z-index: 9999;
 }}
 
+#successfulRegisterMsg{
+    display: none;
+}
+
+#loggedUserOptions{
+    display: none;
+}
+
+.align-right{
+    float: right;
+}
+

@@ -54,18 +54,26 @@
                      <a class="nav-link" aria-current="page" href="#">Icon</a>
                   </li>
                  <li class="nav-item active">
-                   <a class="nav-link" aria-current="page" href="#" onclick="switch_displays('#welcome-section')">Home</a>
+                   <button id="navbarWelcomeBtn" class="nav-link" aria-current="page" href="#" onclick="switch_displays('#welcome-section')">Home</button>
                  </li>
                  <li class="nav-item">
-                   <a class="nav-link" href="#" onclick="switch_displays('#signup-section')">Sign Up</a>
+                   <button id="navbarSignupBtn" class="nav-link" href="#" onclick="switch_displays('#signup-section')">Sign Up</button>
                  </li>
                  <li class="nav-item">
-                   <a class="nav-link" href="#" onclick="switch_displays('#login-section')">Log In</a>
+                   <button id="navbarLoginBtn" class="nav-link" href="#" onclick="switch_displays('#login-section')">Log In</button>
                  </li>
                  <li class="nav-item">
                    <a class="nav-link" href="#" onclick="showAbout()">About</a>
                  </li>
                </ul>
+               <ul id="loggedUserOptions" class="navbar-nav mb-2 mb-lg-0 mr-auto">
+                  <li class="nav-item">
+                     <a id="logoutBtn" class="nav-link" href="#" onclick="logOut()">Log Out</a>
+                   </li>
+                    <li class="nav-item">
+                     <p id="welcomeUserMsg" class="nav-link" href="#" >Welcome </p>
+                  </li>
+                 </ul>
              </div>
            </div>
          </nav>
@@ -199,6 +207,10 @@
                <div class="col-12 col-md-9 col-lg-7 col-xl-6">
                   <div class="card" style="border-radius: 15px;">
                      <div class="card-body p-5">
+                     <div id="successfulRegisterMsg">
+                        <h2 class="text-uppercase text-center mb-5">Successfully Registered the user, Welcome !</h2>
+                        <br>
+                     </div>
                      <h2 class="text-uppercase text-center mb-5">Login</h2>
 
                      <form>
@@ -231,7 +243,7 @@
       </section>
 
       <!-- Configuration Screen -->
-      <section id="config-section">
+      <section id="config-section" class="vh-100 bg-image">
          <h3> Place holder for config section</h3>
       </section>
 
