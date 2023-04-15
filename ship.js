@@ -20,6 +20,10 @@ var playerhit;
 var enemyhit;
 var bgsound;
 
+const sections_ids = ["#welcome-section", "#game-section", "#login-section", "#signup-section", "#config-section"]
+const testUser = {"username":"p","password":"testuser"};
+const all_users =[testUser];
+
 function setupGame() {
   canvas = document.getElementById("theCanvas");
   context = canvas.getContext("2d");
@@ -375,4 +379,118 @@ function drawBullet() {
 }
 window.onload = setupGame;
 
+function switch_displays(switch_to_id){
+    sections_ids.forEach(section_id => {
+      if(section_id != switch_to_id)
+        $(section_id).hide();
+      else
+        $(section_id).show()
+    });
+}
 
+// About Modal Dialog
+function showAbout(){
+  let overlay = document.getElementById("overlay"); // $("#overlay");
+  let dialog = document.getElementById("dialog"); //$("#dialog");
+  overlay.style.display = "block";
+  dialog.style.display = "block";
+}
+
+function closeAbout() {
+  let overlay = document.getElementById("overlay")
+  let dialog = document.getElementById("dialog");
+  overlay.style.display = "none";
+  dialog.style.display = "none";
+}
+
+// Closing About Window with Escape key
+$(document).ready(function() {
+document.addEventListener("keydown", function(event) {
+  if (event.key === "Escape") {
+    closeAbout();
+  }
+});});
+
+// Login Handling methods:
+function handleLoginClick(){
+    const username = $('#login-input-username');
+    const password = $('#login-input-password');
+    const usernameInput = username.val();
+    const passwordInput = password.val();
+    let loginSuccessful = false;
+    all_users.forEach(user => {
+      console.log("user registered: "+user.username+", " +user.password + "\n" + "input user: " +usernameInput + ", " + passwordInput);
+      if(user.username == usernameInput && user.password == passwordInput){
+        loginSuccessful = true;
+        successfulLogin(user);
+        return;
+      }
+    })
+    if(!loginSuccessful)
+      failedLogin();
+}
+
+function clearLoginInputs(){
+  const username = $('#login-input-username');
+  const password = $('#login-input-password');
+  username.val('');
+  password.val('');
+}
+
+function failedLogin(){
+  clearLoginInputs();
+  alert("Username/Password are wrong,\nPlease try again");
+}
+
+function successfulLogin(user){
+  clearLoginInputs();
+  alert("Welcome "+user.username);
+}
+
+// SignUp Handling Methods:
+const signupForm = document.getElementById("signup-form");
+signupForm.addEventListener("submit", (event) => {
+  event.preventDefault(); // prevent the form from refreshing the page
+  // call your function to handle the form data here
+});
+
+
+function handleRegisterClick(){
+  const fullName = $('#signup-input-fullName');
+  const username = $('#signup-input-userName');
+  const email = $('#signup-input-email');
+  const date = $('#signup-input-date');
+  const password = $('#signup-input-password');
+  const passwordRepeat = $('#signup-input-passwordrepeat');
+  let validSignup =true;
+  signupInputs = [fullName, username, email, date, password, password];
+  if (!validateNotEmpty)
+    return;
+  //TODO: Continue here
+
+}
+
+function validateNotEmpty(inputsArray){
+  signupInputs.forEach(input => {
+    if (input.val() == ''){
+      alert("Fields can't be empty,\nPlease fill all the fields")
+      return false;
+    }
+  });
+  return true;
+}
+
+function clearSignupInputs(){
+  const fullName = $('#signup-input-fullName');
+  const username = $('#signup-input-userName');
+  const email = $('#signup-input-email');
+  const date = $('#signup-input-date');
+  const password = $('#signup-input-password');
+  const passwordRepeat = $('#signup-input-passwordrepeat');
+  fullName.val('');
+  username.val('');
+  email.val('');
+  date.val('');
+  password.val('');
+  passwordRepeat.val('');
+}

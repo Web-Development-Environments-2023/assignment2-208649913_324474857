@@ -1,0 +1,7 @@
+* fix navbar menu to top when scrolling
+* Add config section
+* switch screen to config-screen on successful login
+* Finish Validation of SignUp screen
+* Overall design and UI of the game
+* Add Icon of the game 
+* Fix About dialog exit on signin and sign up 

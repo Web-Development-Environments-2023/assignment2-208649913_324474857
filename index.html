@@ -2,7 +2,7 @@
 <html>
    <head>
       <meta charset = "utf-8">
-      <title>Cannon Game</title>
+      <title>Spaceships Attack</title>
       <link rel="stylesheet" href="style.css" />
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
       <!-- Font Awesome -->
@@ -26,19 +26,111 @@
       type="text/javascript"
       src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"
       ></script>
-      
+      <!-- JQuery -->
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <!-- Game Script -->
       <script src = "ship.js"></script>
    </head>
    <body class="text-center">
-      <audio id = "playerhit" preload = "auto">
-         <source src = "resources/audio/playerhit.mp3" type = "audio/mp3"></audio>
-      <audio id = "enemyhit" preload = "auto">
-         <source src = "resources/audio/enemyhit.mp3" type = "audio/mp3"></audio>
-      <audio id = "bgsound" preload = "auto">
-         <source src = "resources/audio/bgsound.mp3" type = "audio/mp3"></audio>
-      <canvas id = "theCanvas" style="background-image: url('resources/images/bg.jpg')" width = "480" height = "500"></canvas> 
-      <p><input id = "startButton" type = "button" value = "Start Game">
-      </p>
+
+      <header>
+         <!-- Navbar -->
+         <nav class="navbar navbar-expand-lg navbar-light bg-white">
+           <div class="container-fluid">
+             <!-- <button
+               class="navbar-toggler"
+               type="button"
+               data-mdb-toggle="collapse"
+               data-mdb-target="#navbarExample01"
+               aria-controls="navbarExample01"
+               aria-expanded="false"
+               aria-label="Toggle navigation"
+             >
+               <i class="fas fa-bars"></i>
+             </button> -->
+             <div class="collapse navbar-collapse" id="navbarExample01">
+               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item active">
+                     <a class="nav-link" aria-current="page" href="#">Icon</a>
+                  </li>
+                 <li class="nav-item active">
+                   <a class="nav-link" aria-current="page" href="#" onclick="switch_displays('#welcome-section')">Home</a>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link" href="#" onclick="switch_displays('#signup-section')">Sign Up</a>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link" href="#" onclick="switch_displays('#login-section')">Log In</a>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link" href="#" onclick="showAbout()">About</a>
+                 </li>
+               </ul>
+             </div>
+           </div>
+         </nav>
+         <!-- Navbar -->
+
+
+       <section id="welcome-section">
+         <!-- Background image -->
+         <div
+           id="welcome-div"
+           class="p-5 text-center bg-image"
+           style="background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/041.webp');"
+         >
+           <div class="mask" style="background-color: rgba(0, 0, 0, 0.7);">
+             <div class="d-flex justify-content-center align-items-center h-100">
+               <div class="text-white">
+                 <h1 class="mb-3">Spaceships Attack Game</h1>
+                 <h5 class="mb-4">Welcome aboard, Start Playing</h5>
+                 <a
+                   class="btn btn-outline-light btn-lg m-2"
+                   href="#"
+                   onclick="switch_displays('#login-section')"
+                 >Log In</a
+                 >
+                 <a
+                   class="btn btn-outline-light btn-lg m-2"
+                   onclick="switch_displays('#signup-section')"
+                 >Sign Up</a
+                 >
+               </div>
+             </div>
+           </div>
+         </div>
+         <!-- Background image -->
+      </section>
+   </header>
+<!-- About Modal Dialog  -->
+   <div id="overlay" onclick="closeAbout()"></div>
+   <div id="dialog">
+      <h3>This game was created by Eithan Markman and Ariel Dawidowicz</h3>
+      <h5>The game uses JQuery and MDB bootstap templates</h5>
+      <h5>How to play? </h5>
+      <ul> 
+         <li><h6> Space = Shoot</h6></li>
+         <li><h6> &rarr; = Move right</h6></li>
+         <li><h6> &larr; = Move left</h6></li>
+         <li><h6> &uarr; = Move up</h6></li>
+         <li><h6> &darr; = Move down</h6></li>
+         
+      </ul>
+      <button onclick="closeAbout()">Close</button>
+   </div>
+
+   <!-- Game Screen -->
+      <section id="game-section">
+         <audio id = "playerhit" preload = "auto">
+            <source src = "resources/audio/playerhit.mp3" type = "audio/mp3"></audio>
+         <audio id = "enemyhit" preload = "auto">
+            <source src = "resources/audio/enemyhit.mp3" type = "audio/mp3"></audio>
+         <audio id = "bgsound" preload = "auto">
+            <source src = "resources/audio/bgsound.mp3" type = "audio/mp3"></audio>
+         <canvas id = "theCanvas" style="background-image: url('resources/images/bg.jpg')" width = "480" height = "500"></canvas> 
+         <p><input id = "startButton" type = "button" value = "Start Game">
+         </p>
+      </section>
       <!-- Sign Up  -->
       <section class="vh-100 bg-image" id="signup-section"
          style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp');">
@@ -50,7 +142,7 @@
                      <div class="card-body p-5">
                      <h2 class="text-uppercase text-center mb-5">Create an account</h2>
 
-                     <form>
+                     <form id="signup-form" onsubmit="handleRegisterClick()">
                         <div class="form-outline mb-4">
                            <input type="text" id="signup-input-fullName" class="form-control form-control-lg" />
                            <label class="form-label" for="signup-input-fullName">Your Name</label>
@@ -72,22 +164,22 @@
                         </div>
 
                         <div class="form-outline mb-4">
-                           <input type="password" id="form3Example4cg" class="form-control form-control-lg" />
-                           <label class="form-label" for="form3Example4cg">Password</label>
+                           <input type="password" id="signup-input-password" class="form-control form-control-lg" />
+                           <label class="form-label" for="signup-input-password">Password</label>
                         </div>
 
                         <div class="form-outline mb-4">
-                           <input type="password" id="form3Example4cdg" class="form-control form-control-lg" />
-                           <label class="form-label" for="form3Example4cdg">Repeat your password</label>
+                           <input type="password" id="signup-input-passwordrepeat" class="form-control form-control-lg" />
+                           <label class="form-label" for="signup-input-passwordrepeat">Repeat your password</label>
                         </div>
 
                         <div class="d-flex justify-content-center">
-                           <button type="button"
+                           <button type="submit"
                            class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Register</button>
                         </div>
 
                         <p class="text-center text-muted mt-5 mb-0">Have already an account? <a href="#!"
-                           class="fw-bold text-body"><u>Login here</u></a></p>
+                           class="fw-bold text-body" onclick="switch_displays('#login-section')"><u>Login here</u></a></p>
 
                      </form>
 
@@ -112,21 +204,21 @@
                      <form>
 
                         <div class="form-outline mb-4">
-                           <input type="text" id="form3Example1cg" class="form-control form-control-lg" />
-                           <label class="form-label" for="form3Example1cg">User Name</label>
+                           <input type="text" id="login-input-username" class="form-control form-control-lg" />
+                           <label class="form-label" for="login-input-username">User Name</label>
                         </div>
                         <div class="form-outline mb-4">
-                           <input type="password" id="form3Example4cg" class="form-control form-control-lg" />
-                           <label class="form-label" for="form3Example4cg">Password</label>
+                           <input type="password" id="login-input-password" class="form-control form-control-lg" />
+                           <label class="form-label" for="login-input-password">Password</label>
                         </div>
 
                         <div class="d-flex justify-content-center">
-                           <button type="button"
+                           <button type="button" onclick="handleLoginClick()"
                            class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Log In</button>
                         </div>
 
                         <p class="text-center text-muted mt-5 mb-0">Don't have an account? <a href="#!"
-                           class="fw-bold text-body"><u>Sign up here</u></a></p>
+                           class="fw-bold text-body" onclick="switch_displays('#signup-section')"><u>Sign up here</u></a></p>
 
                      </form>
 
@@ -137,6 +229,12 @@
             </div>
          </div>
       </section>
+
+      <!-- Configuration Screen -->
+      <section id="config-section">
+         <h3> Place holder for config section</h3>
+      </section>
+
    </body>
    <footer class="footer">
       <div class="container">

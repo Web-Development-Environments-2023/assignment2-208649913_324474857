@@ -11,6 +11,26 @@ footer{
     padding-bottom: 5px;
     background-color: #F9E2AF;
 }
+
+nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    /* background-color: #333; */
+    /* color: #fff; */
+}
+
+/* Default height for small devices */
+#welcome-div {
+height: 400px;
+}
+
+/* Height for devices larger than 992px */
+@media (min-width: 992px) {
+#welcome-div {
+    height: 600px;
+}
+
 #login-div{
     /* display: none; */
     width: 50%;
@@ -43,3 +63,28 @@ footer{
     /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     background: linear-gradient(to right, rgba(132, 250, 176, 1), rgba(143, 211, 244, 1))
     }
+
+
+#overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+    
+#dialog {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}}
+
