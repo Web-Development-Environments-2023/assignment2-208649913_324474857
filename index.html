@@ -56,7 +56,7 @@
                  <li class="nav-item active">
                    <button id="navbarWelcomeBtn" class="nav-link" aria-current="page" href="#" onclick="switch_displays('#welcome-section')">Home</button>
                  </li>
-                 <li class="nav-item">
+                 <li class="nav-item" id="tmpo">
                    <button id="navbarSignupBtn" class="nav-link" href="#" onclick="switch_displays('#signup-section')">Sign Up</button>
                  </li>
                  <li class="nav-item">
@@ -81,14 +81,11 @@
          <!-- Navbar -->
 
 
-       <section id="welcome-section">
+       <section id="welcome-section" >
          <!-- Background image -->
-         <div
-           id="welcome-div"
-           class="p-5 text-center bg-image"
-           style="background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/041.webp');"
-         >
-           <div class="mask" style="background-color: rgba(0, 0, 0, 0.7);">
+         <div id="welcome-div" class="p-5 text-center bg-image h-100" style="background-image: url('resources/images/pagebg.png')">
+
+           <div class="mask" style="background-color: rgba(0, 0, 0, 0.5);">
              <div class="d-flex justify-content-center align-items-center h-100">
                <div class="text-white">
                  <h1 class="mb-3">Spaceships Attack Game</h1>
@@ -137,13 +134,13 @@
          <audio id = "bgsound" preload = "auto">
             <source src = "resources/audio/bgsound.mp3" type = "audio/mp3"></audio>
          <canvas id = "theCanvas" style="background-image: url('resources/images/bg.jpg')" width = "480" height = "500"></canvas> 
-         <p><input id = "startButton" type = "button" value = "Start Game">
-         </p>
+         <!-- <p><input id = "startButton" type = "button" value = "Start Game">
+         </p> -->
       </section>
       <!-- Sign Up  -->
-      <section class="vh-100 bg-image" id="signup-section"
-         style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp');">
-         <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+      <section class="bg-image" id="signup-section"
+         style="background-image: url('resources/images/pagebg.png');">
+         <div class="mask d-flex align-items-center gradient-custom-3 mt-3">
             <div class="container h-100">
                <div class="row d-flex justify-content-center align-items-center h-100">
                <div class="col-12 col-md-9 col-lg-7 col-xl-6">
@@ -184,7 +181,7 @@
 
                         <div class="d-flex justify-content-center">
                            <button type="submit"
-                           class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Register</button>
+                           class="btn btn-success btn-block btn-lg text-body">Register</button>
                         </div>
 
                         <p class="text-center text-muted mt-5 mb-0">Have already an account? <a href="#!"
@@ -201,7 +198,7 @@
       </section>
       <!-- Login -->
       <section class="vh-100 bg-image" id="login-section"
-         style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp');">
+      style="background-image: url('resources/images/pagebg.png')">
          <div class="mask d-flex align-items-center h-100 gradient-custom-3">
             <div class="container h-100">
                <div class="row d-flex justify-content-center align-items-center h-100">
@@ -227,7 +224,7 @@
 
                         <div class="d-flex justify-content-center">
                            <button type="button" onclick="handleLoginClick()"
-                           class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Log In</button>
+                           class="btn btn-success btn-block btn-lg text-body">Log In</button>
                         </div>
 
                         <p class="text-center text-muted mt-5 mb-0">Don't have an account? <a href="#!"
@@ -244,8 +241,40 @@
       </section>
 
       <!-- Configuration Screen -->
-      <section id="config-section" class="vh-100 bg-image">
-         <h3> Place holder for config section</h3>
+      <section class="vh-100 bg-image" id="config-section"
+      style="background-image: url('resources/images/pagebg.png')">
+         <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+            <div class="container h-100">
+               <div class="row d-flex justify-content-center align-items-center h-100">
+               <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                  <div class="card" style="border-radius: 15px;">
+                     <div class="card-body p-5">
+                     <div id="successfulRegisterMsg">
+                        <h2 class="text-uppercase text-center mb-5">Successfully Registered the user, Welcome !</h2>
+                        <br>
+                     </div>
+                     <h2 class="text-uppercase text-center mb-5">CONFIGURATIONS</h2>
+                        <span>Choose your Spaceship</span><br/>
+                           <div class="spaceships mt-3">
+                              <img src="./resources/images/airplane-1.png" onclick="selectSpaceShip(1)" class="spaceship" style="margin-right: 10px; margin-right: 10px;" id="sp1"/>
+                              <img src="./resources/images/airplane-2.png"class="spaceship" id="sp2" onclick="selectSpaceShip(2)"  style="margin-right: 10px; margin-right: 10px;"/>
+                              <img src="./resources/images/airplane-3.png" class="spaceship"  style="margin-right: 10px; margin-right: 10px;" id="sp3" onclick="selectSpaceShip(3)"/><br/><br/>
+
+                           </div>
+                        <span>Enter key to shoot </span><br/>
+                           <input id="key" class="text-center" maxlength="1" onkeypress ="handleKeyEnter(event)"/><br/><br/>
+
+                        <span>select bullet color</span><br/>
+                           <input type="color"></input><bt/><br/><br/>
+
+                           <button type="button" onclick="handleStartGame()"
+                           class="btn btn-success btn-block btn-lg text-body ">Start game</button>
+                     </div>
+                  </div>
+               </div>
+               </div>
+            </div>
+         </div>
       </section>
 
    </body>

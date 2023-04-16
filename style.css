@@ -4,13 +4,14 @@ canvas {
 
 footer{
     vertical-align: top;
-    position: fixed;
+    /* position: fixed; */
     bottom: 0;
     left: 0;
     width: 100%;
     padding-bottom: 5px;
     padding-top: 5px;
-    background-color: #F9E2AF;
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
 }
 
 nav {
@@ -46,24 +47,25 @@ height: 400px;
 
 .gradient-custom-3 {
     /* fallback for old browsers */
-    background: #84fab0;
+    background: #282828;
     
     /* Chrome 10-25, Safari 5.1-6 */
-    background: -webkit-linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5));
+    background: -webkit-linear-gradient(to right, rgba(1, 1, 1, 0.5), rgba(10, 10, 10, 0.5));
     
     /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    background: linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5))
-    }
-    .gradient-custom-4 {
+    background: linear-gradient(to right, rgba(36, 36, 36, 0.819), rgba(30, 30, 30, 0.5))
+}
+
+.gradient-custom-4 {
     /* fallback for old browsers */
-    background: #84fab0;
+    background: #282828;
     
     /* Chrome 10-25, Safari 5.1-6 */
     background: -webkit-linear-gradient(to right, rgba(132, 250, 176, 1), rgba(143, 211, 244, 1));
     
     /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     background: linear-gradient(to right, rgba(132, 250, 176, 1), rgba(143, 211, 244, 1))
-    }
+}
 
 
 #overlay {
@@ -101,3 +103,19 @@ height: 400px;
     float: right;
 }
 
+#welcome-section{
+    height: 100vh;
+}
+
+#signup-section{
+    height: 130vh;
+}
+
+.spaceship{
+    transition: ease-in-out .2s;
+    cursor: pointer;
+}
+
+.spaceship:hover{
+    transform: scale(1.2);
+}

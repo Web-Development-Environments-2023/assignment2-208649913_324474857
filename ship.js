@@ -19,6 +19,9 @@ var enemySpeedInterval;
 var playerhit;
 var enemyhit;
 var bgsound;
+var spaceShipOption;
+var colorInput;
+let shootingKey = 115;
 
 const sections_ids = ["#welcome-section", "#game-section", "#login-section", "#signup-section", "#config-section"]
 const testUser = {"username":"p","password":"testuser"};
@@ -30,8 +33,8 @@ function setupGame() {
   canvas = document.getElementById("theCanvas");
   context = canvas.getContext("2d");
 
-  var startButton = document.getElementById("startButton");
-  startButton.addEventListener("click", newGame, false);
+  // var startButton = document.getElementById("startButton");
+  // startButton.addEventListener("click", newGame, false);
 
   enemyImage = new Image();
   enemyImage.src = "resources/images/enemy.png";
@@ -189,7 +192,7 @@ function resetPlayerPosition() {
   
 function resetElements() {
   playerImage = new Image();
-  playerImage.src = "resources/images/airplane.png";
+  playerImage.src = `resources/images/airplane-${spaceShipOption}.png`;
   playerImage.onload = function () {
     playerX = canvas.width / 2 - playerImage.width / 2;
     playerY = canvas.height - playerImage.height;
@@ -258,67 +261,40 @@ function drawHearts(numHearts) {
 
 
 
-  function updatePosition() {
-    context.clearRect(0, 0, canvas.width, canvas.height);
+function updatePosition() {
+  context.clearRect(0, 0, canvas.width, canvas.height);
 
-    drawHearts(lives)
-    
-    document.onkeydown = function (event) {
-      switch (event.keyCode) {
-        case 37:
-          if (playerX - 20 >= 0) {
-            playerX -= 20;
-          }
-          break;
-        case 38:
-          if (playerY - 20 >= 0 && playerY > canvas.height * 0.6) {
-            playerY -= 20;
-          }
-          break;
-        case 39:
-          if (playerX + playerImage.width + 20 <= canvas.width) {
-            playerX += 20;
-          }
-          break;
-        case 40:
-          if (playerY + playerImage.height + 20 <= canvas.height) {
-            playerY += 20;
-          }
-          break;
-        case 37 && 38: 
-          if (playerX - 20 >= 0 && playerY - 20 >= 0 && playerY > canvas.height * 0.6) {
-            playerX -= 20;
-            playerY -= 20;
-          }
-          break;
-        case 37 && 40:
-          if (playerX - 20 >= 0 && playerY + playerImage.height + 20 <= canvas.height) {
-            playerX -= 20;
-            playerY += 20;
-          }
-          break;
-        case 39 && 38:
-          if (playerX + playerImage.width + 20 <= canvas.width && playerY - 20 >= 0 && playerY > canvas.height * 0.6) {
-            playerX += 20;
-            playerY -= 20;
-          }
-          break;
-        case 39 && 40:
-          if (playerX + playerImage.width + 20 <= canvas.width && playerY + playerImage.height + 20 <= canvas.height * 0.4) {
-            playerX += 20;
-            playerY += 20;
-          }
-          break;
-        case 32: // when the player will choose the button to shoot change 32 to the proper key - now its hard coded
-          if (!isShooting) {
-            isShooting = true;
-            bulletX = playerX + playerImage.width / 2;
-            bulletY = playerY;
-            shootBullet();
-          }
-          break;
+  drawHearts(lives);
+
+  document.onkeydown = function(event) {
+    var key = event.keyCode;
+
+    if (key === 37) { // left arrow key
+      if (playerX - 20 >= 0) {
+        playerX -= 20;
       }
-    };
+    } else if (key === 38) { // up arrow key
+      if (playerY - 20 >= 0 && playerY > canvas.height * 0.6) {
+        playerY -= 20;
+      }
+    } else if (key === 39) { // right arrow key
+      if (playerX + playerImage.width + 20 <= canvas.width) {
+        playerX += 20;
+      }
+    } else if (key === 40) { // down arrow key
+      if (playerY + playerImage.height + 20 <= canvas.height) {
+        playerY += 20;
+      }
+    } else if (key === shootingKey) { // spacebar key
+      if (!isShooting) {
+        isShooting = true;
+        bulletX = playerX + playerImage.width / 2;
+        bulletY = playerY;
+        shootBullet();
+      }
+    }
+  };
+
 
     generateEnemyBullets();
 
@@ -340,7 +316,7 @@ function drawHearts(numHearts) {
   
 function shootBullet() {
   context.beginPath();
-  context.fillStyle = "#000000";
+  context.fillStyle = colorInput;
   context.arc(bulletX, bulletY, bulletRadius, 0, Math.PI * 2);
   context.fill();
 }
@@ -375,7 +351,7 @@ function drawPoints(){
 
 function drawBullet() {
   context.beginPath();
-  context.fillStyle = "#000000";
+  context.fillStyle = colorInput;
   context.arc(bulletX, bulletY, bulletRadius, 0, Math.PI * 2);
   context.fill();
 }
@@ -431,6 +407,9 @@ function handleLoginClick(){
       if(user.username == usernameInput && user.password == passwordInput){
         loginSuccessful = true;
         successfulLogin(user);
+        loggedUser = usernameInput;
+        document.getElementById('welcomeUserMsg').textContent = 'welcome ' + loggedUser;
+
         return;
       }
     })
@@ -574,4 +553,38 @@ function enablePropButtons(val){
   $("#navbarLoginBtn").prop("disabled", val);
   $("#navbarSignupBtn").prop("disabled", val);
   $("#navbarWelcomeBtn").prop("disabled", val);
+}
+
+function selectSpaceShip(option){
+  if (option == 1){
+    $("#sp2").hide()
+    $("#sp3").hide()
+    spaceShipOption = 1
+    return
+  }
+  if (option == 2){
+    $("#sp1").hide()
+    $("#sp3").hide()
+    spaceShipOption = 2
+    return
+  }
+  if (option == 3){
+    $("#sp2").hide()
+    $("#sp1").hide()
+    spaceShipOption = 3
+    return
+  }
+}
+
+
+function handleStartGame(){
+  colorInput = document.querySelector('input[type="color"]').value;
+  switch_displays("#game-section");
+  newGame()
+}
+
+function handleKeyEnter(event) {
+  let key = event.keyCode;
+  shootingKey = key
+  
 }

@@ -1,11 +1,11 @@
 Requirements:
-* Add config section
-* Overall design and UI of the game
-* Add Icon of the game 
+* Add config section - done => fix the key configuration
+* Overall design and UI of the game - done
+* Add Icon of the game - done
 * Check If new registed user can successfully log in 
 * Add implementations to About window (timer, instruction etc.)
-* Show score when the game is running
-* Add New Game option
+* Show score when the game is running - done
+* Add New Game option - done
 
 
 Fixes/Bugs:
