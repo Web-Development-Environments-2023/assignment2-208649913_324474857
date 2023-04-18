@@ -37,21 +37,10 @@
          <!-- Navbar -->
          <nav class="navbar navbar-expand-lg navbar-light bg-white  ">
            <div class="container-fluid">
-             <!-- <button
-               class="navbar-toggler"
-               type="button"
-               data-mdb-toggle="collapse"
-               data-mdb-target="#navbarExample01"
-               aria-controls="navbarExample01"
-               aria-expanded="false"
-               aria-label="Toggle navigation"
-             >
-               <i class="fas fa-bars"></i>
-             </button> -->
              <div class="collapse navbar-collapse" id="navbarExample01">
                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item active">
-                     <a class="nav-link" aria-current="page" href="#"><img src="resources\images\logo.png" width="25px"/> </a>
+                     <a class="nav-link" class="default-cursor" aria-current="page" href="#"><img src="resources\images\logo.png" width="25px"/> </a>
                   </li>
                  <li class="nav-item active">
                    <button id="navbarWelcomeBtn" class="nav-link" aria-current="page" href="#" onclick="switch_displays('#welcome-section')">Home</button>
@@ -70,7 +59,7 @@
                   <li class="nav-item d-inline-block">
                     <a id="logoutBtn" class="nav-link" href="#" onclick="logOut()">Log Out</a>
                   </li>
-                  <li class="nav-item d-inline-block">
+                  <li class="nav-item d-inline-block default-cursor">
                     <p id="welcomeUserMsg" class="nav-link" href="#">Welcome</p>
                   </li>
                 </ul>
@@ -126,7 +115,7 @@
    </div>
 
    <!-- Game Screen -->
-      <section id="game-section">
+      <section id="game-section" style="background-image: url('resources/images/pagebg.png');">
          <audio id = "playerhit" preload = "auto">
             <source src = "resources/audio/playerhit.mp3" type = "audio/mp3"></audio>
          <audio id = "enemyhit" preload = "auto">
@@ -136,6 +125,30 @@
          <canvas id = "theCanvas" style="background-image: url('resources/images/bg.jpg')" width = "480" height = "500"></canvas> 
          <!-- <p><input id = "startButton" type = "button" value = "Start Game">
          </p> -->
+         <div class="margin-top2-container">
+            <div class="centered"> 
+               <button type="button" onclick="newGame()"
+               class="btn btn-success btn-block btn-lg text-body">New Game</button>
+            </div>
+         </div>
+         <div class="margin-top2-container">
+            <div class="centered"> 
+               <h4 id="resultMsg"> Game Number:  </h4>
+               <h4 id="resultMsg"> Result Message</h4>
+               <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Score Rank</th>
+                      <th scope="col">Game Number</th>
+                      <th scope="col">Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                     <!-- Dynamicaly appended rows of results -->
+                  </tbody>
+                </table>
+            </div>
+         </div>
       </section>
       <!-- Sign Up  -->
       <section class="bg-image" id="signup-section"
@@ -262,7 +275,7 @@
 
                            </div>
                         <span>Enter key to shoot </span><br/>
-                           <input id="key" class="text-center" maxlength="1" onkeypress ="handleKeyEnter(event)"/><br/><br/>
+                           <input id="shootingKey-input" class="text-center" maxlength="1" onkeydown ="handleShootingKeyEnter(event)"/><br/><br/>
 
                         <span>select bullet color</span><br/>
                            <input type="color"></input><bt/><br/><br/>

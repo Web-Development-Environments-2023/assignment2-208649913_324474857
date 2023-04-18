@@ -13,3 +13,23 @@ Fixes/Bugs:
 * Fix About dialog exit on signin and sign up 
 * Fix enablePropButtons function, currently not working
 * Fix show Welcome {user} message.
+
+Requirements 18.4:
+* Game Loop doesn't stop 
+* Show Timer for the game
+* Add game time selection to config section 
+* Show messages after game's result
+* A table of current player records 
+* Fix about modal dialog window and its design
+* event listener on space key - fix needed
+* clear configs and set defaults 
+*Everything moves too fast even though enemy speed is limited 
+* You won infinite loop
+
+
+Done:
+* fix go back to home after logged in 
+* Stop music 
+* New game button 
+* Add background to the game's canvas 
+*Lives aren't reset on new game 

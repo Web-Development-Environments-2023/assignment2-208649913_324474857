@@ -119,3 +119,25 @@ height: 400px;
 .spaceship:hover{
     transform: scale(1.2);
 }
+
+.default-cursor{
+    cursor: default;
+}
+
+.disabled{
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.margin-top2-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1%;
+    /* height: 100vh; */
+  }
+  
+  .centered {
+    text-align: center;
+    margin: auto;
+  } 

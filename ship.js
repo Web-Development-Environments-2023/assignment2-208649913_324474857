@@ -1,39 +1,65 @@
 
-var canvas;
-var context;
-var playerImage;
-var playerX;
-var playerY;
-var bulletX;
-var bulletY;
-var isShooting = false;
-var bulletRadius = 5;
-var enemies = [];
-var enemyDirection = "right";
-var enemySpeed;
-var bullets = [];
-var enemyImage;
-var totalPoints = 0;
-var dy = 3
-var enemySpeedInterval;
-var playerhit;
-var enemyhit;
-var bgsound;
-var spaceShipOption;
-var colorInput;
-let shootingKey = 115;
+let canvas;
+let context;
+let playerImage;
+let playerX;
+let playerY;
+let bulletX;
+let bulletY;
+let isShooting = false;
+let bulletRadius = 5;
+let enemies = [];
+let enemyDirection = "right";
+let bullets = [];
+let enemyImage;
+let enemySpeedInterval;
+let playerhit;
+let enemyhit;
+let bgsound;
 
+let requestIDs = [];
+// let animationFrameRequestId;
+
+// Game parameters
+let enemySpeed = 1;
+let totalPoints = 0;
+let dy = 3;
+let lives = 3; 
+
+
+// Configurations parameters
+let spaceShipOption = 2;
+let colorInput = "#FF0000"; // red color
+let shootingKey = 32; //space key 
+
+
+// Menu buttons:
+let menuLoginBtn;
+let menuSignupBtn;
+let menuWelcomeBtn;
+
+$(document).ready(function() {
+  menuLoginBtn = $("#navbarLoginBtn");
+  menuSignupBtn = $("#navbarSignupBtn");
+  menuWelcomeBtn = $("#navbarWelcomeBtn");
+});
+
+// Users and Passwords managing letiables
 const sections_ids = ["#welcome-section", "#game-section", "#login-section", "#signup-section", "#config-section"]
 const testUser = {"username":"p","password":"testuser"};
 const users_passwords =[testUser];
 const all_registered_users = [];
 let loggedUser = "";
 
+window.onload = setupGame;
+
 function setupGame() {
+  console.log("setupGame");
+  // switch_displays("#welcome-section");
   canvas = document.getElementById("theCanvas");
   context = canvas.getContext("2d");
 
-  // var startButton = document.getElementById("startButton");
+  // let startButton = document.getElementById("startButton");
   // startButton.addEventListener("click", newGame, false);
 
   enemyImage = new Image();
@@ -45,35 +71,57 @@ function setupGame() {
 }
 
 function newGame() {
-    bgsound.play()
+    console.log("newGame");
+    // canvas.focus();
+    playSound();
     clearInterval(enemySpeedInterval)
-    enemySpeed = 1
-    totalPoints = 0;
-    dy = 3
+    newGameRestoreDefaults();
     resetElements();
     startTimer();
     enemySpeedInterval = setInterval(increaseEnemySpeed, 5000); 
-    
-  }
+}
+
+function newGameRestoreDefaults(){
+  enemySpeed = 1;
+  totalPoints = 0;
+  dy = 3;
+  lives = 3;
+}
   
   function increaseEnemySpeed() {
-    if (enemySpeed == 7)
+    console.log("enemyspeed: "+enemySpeed);
+    if (enemySpeed >= 7)
       return
-    enemySpeed += 1; 
+    enemySpeed += 1.5; 
     dy += 0.5
   }
 
+// Game background sound Methods:
+  function pauseSound() {
+    if (typeof bgsound !== 'undefined' && !bgsound.paused) {
+      bgsound.pause();
+    }
+  }
+
+  function playSound() {
+    if (typeof bgsound !== 'undefined' && bgsound.paused) {
+      bgsound.play();
+    }
+  }
+
+
+
 
 function generateEnemies() {
-    var enemyWidth = 30;
-    var enemyHeight = 30;
-    var paddingX = 10;
-    var paddingY = 10;
-    var startX = canvas.width / 2 - (enemyWidth * 4 + paddingX * 3) / 2;
-    var startY = 10;
+    let enemyWidth = 30;
+    let enemyHeight = 30;
+    let paddingX = 10;
+    let paddingY = 10;
+    let startX = canvas.width / 2 - (enemyWidth * 4 + paddingX * 3) / 2;
+    let startY = 10;
   
-    for (var row = 0; row < 4; row++) {
-      var points = 0;
+    for (let row = 0; row < 4; row++) {
+      let points = 0;
       switch (row) {
         case 0:
           points = 20;
@@ -88,10 +136,10 @@ function generateEnemies() {
           points = 5;
           break;
       }
-      for (var col = 0; col < 5; col++) {
-        var enemyX = startX + col * (enemyWidth + paddingX);
-        var enemyY = startY + row * (enemyHeight + paddingY);
-        var enemy = {
+      for (let col = 0; col < 5; col++) {
+        let enemyX = startX + col * (enemyWidth + paddingX);
+        let enemyY = startY + row * (enemyHeight + paddingY);
+        let enemy = {
           x: enemyX,
           y: enemyY,
           width: enemyWidth,
@@ -109,27 +157,27 @@ function generateEnemies() {
   function checkWinning(){
     if (totalPoints == 250){
       alert("YOU WON!!!")
-      newGame()
+      // newGame()
     }
   }
 
-  var enemyIsShooting = false;
+  let enemyIsShooting = false;
 
   function generateEnemyBullets() {
-    var minBulletY = canvas.height;
-    for (var i = 0; i < bullets.length; i++) {
-      var bullet = bullets[i];
+    let minBulletY = canvas.height;
+    for (let i = 0; i < bullets.length; i++) {
+      let bullet = bullets[i];
       if (bullet.y < minBulletY) {
         minBulletY = bullet.y;
       }
     }
     if (minBulletY >= canvas.height * 3 / 4 && !enemyIsShooting) {
-      var shootingEnemies = enemies.filter(function(enemy) { return enemy.canShoot; });
+      let shootingEnemies = enemies.filter(function(enemy) { return enemy.canShoot; });
       if (shootingEnemies.length > 0) {
-        var randomIndex = Math.floor(Math.random() * shootingEnemies.length);
-        var enemy = shootingEnemies[randomIndex];
+        let randomIndex = Math.floor(Math.random() * shootingEnemies.length);
+        let enemy = shootingEnemies[randomIndex];
         enemyIsShooting = true;
-        var bullet = {
+        let bullet = {
           x: enemy.x + enemy.width / 2,
           y: enemy.y + enemy.height,
           dy: dy
@@ -141,12 +189,10 @@ function generateEnemies() {
   }
   
   
-  
-  var lives = 3; 
 
 function updateBulletPositions() {
-  for (var i = 0; i < bullets.length; i++) {
-    var bullet = bullets[i];
+  for (let i = 0; i < bullets.length; i++) {
+    let bullet = bullets[i];
     bullet.y += bullet.dy;
     context.beginPath();
     context.fillStyle = "green";
@@ -175,10 +221,12 @@ function updateBulletPositions() {
 }
 
 function endGame() {
+  console.log("endGame");
   alert("Game Over, points:  "+ totalPoints);
   resetElements();
-  clearInterval(enemySpeedInterval)
-  newGame();
+  clearInterval(enemySpeedInterval);
+  stopTimer();
+  // newGame();
   lives = 3;
 }
 
@@ -191,6 +239,7 @@ function resetPlayerPosition() {
   
   
 function resetElements() {
+  console.log("resetElements");
   playerImage = new Image();
   playerImage.src = `resources/images/airplane-${spaceShipOption}.png`;
   playerImage.onload = function () {
@@ -204,16 +253,30 @@ function resetElements() {
 }
 
 function startTimer() {
-  window.requestAnimationFrame(updatePosition);
+  console.log("startTimer");
+  let requestId = window.requestAnimationFrame(updatePosition);
+  requestIDs.push(requestId);
+  // console.log(animationFrameRequestId);
+}
+
+function stopTimer() {
+  console.log("stopTimer");
+  for (let id of requestIDs) {
+    console.log(id);
+    window.cancelAnimationFrame(id);
+  }
+  requestIDs = [];
+  // window.cancelAnimationFrame(animationFrameRequestId);
+  // console.log(animationFrameRequestId);
 }
 
 
 function updateEnemyPosition() {
-  var maxX = 0;
-  var minX = canvas.width;
+  let maxX = 0;
+  let minX = canvas.width;
 
-  for (var i = 0; i < enemies.length; i++) {
-    var enemy = enemies[i];
+  for (let i = 0; i < enemies.length; i++) {
+    let enemy = enemies[i];
     if (enemyDirection == "right") {
       enemy.x += enemySpeed;
       if (enemy.x + enemy.width >= maxX) {
@@ -233,8 +296,8 @@ function updateEnemyPosition() {
     enemyDirection = "right";
   }
 
-  for (var i = 0; i < enemies.length; i++) {
-    var enemy = enemies[i];
+  for (let i = 0; i < enemies.length; i++) {
+    let enemy = enemies[i];
     context.drawImage(enemyImage, enemy.x, enemy.y, enemy.width, enemy.height);
   }
 }
@@ -242,9 +305,9 @@ function updateEnemyPosition() {
   
 function drawHearts(numHearts) {
   context.fillStyle = "red";
-  for (var i = 0; i < numHearts; i++) {
-    var x = i * 20 + 10;
-    var y = 10;
+  for (let i = 0; i < numHearts; i++) {
+    let x = i * 20 + 10;
+    let y = 10;
     context.beginPath();
     context.moveTo(x, y + 5);
     context.bezierCurveTo(x, y, x + 5, y, x + 5, y + 5);
@@ -267,25 +330,24 @@ function updatePosition() {
   drawHearts(lives);
 
   document.onkeydown = function(event) {
-    var key = event.keyCode;
-
-    if (key === 37) { // left arrow key
+    let cur_key = event.keyCode;
+    if (cur_key === 37) { // left arrow cur_key
       if (playerX - 20 >= 0) {
         playerX -= 20;
       }
-    } else if (key === 38) { // up arrow key
+    } else if (cur_key === 38) { // up arrow cur_key
       if (playerY - 20 >= 0 && playerY > canvas.height * 0.6) {
         playerY -= 20;
       }
-    } else if (key === 39) { // right arrow key
+    } else if (cur_key === 39) { // right arrow cur_key
       if (playerX + playerImage.width + 20 <= canvas.width) {
         playerX += 20;
       }
-    } else if (key === 40) { // down arrow key
+    } else if (cur_key === 40) { // down arrow cur_key
       if (playerY + playerImage.height + 20 <= canvas.height) {
         playerY += 20;
       }
-    } else if (key === shootingKey) { // spacebar key
+    } else if (cur_key === shootingKey) { // shooting key
       if (!isShooting) {
         isShooting = true;
         bulletX = playerX + playerImage.width / 2;
@@ -295,24 +357,22 @@ function updatePosition() {
     }
   };
 
+  generateEnemyBullets();
+  updateBulletPositions();
+  drawPoints();
 
-    generateEnemyBullets();
-
-    updateBulletPositions();
-
-    drawPoints();
-
-    
-    context.drawImage(playerImage, playerX, playerY);
-    
-    if (isShooting) {
-      drawBullet();
-      updateBulletPosition();
-    }
-    checkWinning();
-    updateEnemyPosition()
-    window.requestAnimationFrame(updatePosition);
+  context.drawImage(playerImage, playerX, playerY);  
+  if (isShooting) {
+    drawBullet();
+    updateBulletPosition();
   }
+  checkWinning();
+  updateEnemyPosition()
+  let requestId = window.requestAnimationFrame(updatePosition);
+  requestIDs.push(requestId);
+  // console.log(animationFrameRequestId);
+}
+
   
 function shootBullet() {
   context.beginPath();
@@ -324,8 +384,8 @@ function shootBullet() {
 function updateBulletPosition() {
   bulletY -= 10; 
   
-  for (var i = 0; i < enemies.length; i++) {
-    var enemy = enemies[i];
+  for (let i = 0; i < enemies.length; i++) {
+    let enemy = enemies[i];
     if (bulletX >= enemy.x && bulletX <= enemy.x + enemy.width &&
         bulletY >= enemy.y && bulletY <= enemy.y + enemy.height) {
       enemyhit.play();
@@ -342,10 +402,10 @@ function updateBulletPosition() {
 }
 
 function drawPoints(){
-  var totalPointsText = "Points: " + totalPoints;
+  let totalPointsText = "Points: " + totalPoints;
   context.fillStyle = "black";
   context.font = "bold 20px Arial";
-  var textWidth = context.measureText(totalPointsText).width;
+  let textWidth = context.measureText(totalPointsText).width;
   context.fillText(totalPointsText, canvas.width - textWidth - 10, 30);
 }
 
@@ -355,7 +415,7 @@ function drawBullet() {
   context.arc(bulletX, bulletY, bulletRadius, 0, Math.PI * 2);
   context.fill();
 }
-window.onload = setupGame;
+
 
 function switch_displays(switch_to_id){
     switch_displays_setup();
@@ -370,7 +430,9 @@ function switch_displays(switch_to_id){
 function switch_displays_setup(){
   clearLoginInputs();
   clearSignupInputs();
+  clearConfigInputs();
   $('#successfulRegisterMsg').hide();
+  pauseSound();
 }
 
 // About Modal Dialog
@@ -393,6 +455,10 @@ $(document).ready(function() {
 document.addEventListener("keydown", function(event) {
   if (event.key === "Escape") {
     closeAbout();
+  }
+  // prevent space to trigger buttons 
+  if (event.code === 'Space' && event.target.tagName !== 'INPUT') { 
+    event.preventDefault();
   }
 });});
 
@@ -432,7 +498,7 @@ function failedLogin(){
 function successfulLogin(user){
   $("#loggedUserOptions").show();
   $("#welcomeUserMsg").val("Welcome "+user.username);
-  enablePropButtons(false);
+  disableMenuButtons();
   switch_displays("#config-section");
 }
 
@@ -544,17 +610,35 @@ function successfulRegister(newUser, password){
 function logOut(){
   loggedUser = "";
   $("#loggedUserOptions").hide();
-  enablePropButtons(true);
+  enableMenuButtons();
+  restoreConfigDefaults();
   switch_displays("#welcome-section");
 }
 
-// Affects Welcome, Login and Sign up buttons, for enabling pass true, for disabling pass false
-function enablePropButtons(val){
-  $("#navbarLoginBtn").prop("disabled", val);
-  $("#navbarSignupBtn").prop("disabled", val);
-  $("#navbarWelcomeBtn").prop("disabled", val);
+//Methods for Menu button of : Home, log in, Sign up 
+function disableMenuButtons(){
+  buttons = [menuLoginBtn, menuSignupBtn, menuWelcomeBtn];
+  buttons.forEach(button => {
+    button.prop("disabled", true);
+    button.addClass("disabled");
+  }) 
+  // menuLoginBtn.prop("disabled", true);
+  // menuSignupBtn.prop("disabled", true);
+  // menuWelcomeBtn.prop("disabled", true);
 }
 
+function enableMenuButtons(){
+  buttons = [menuLoginBtn, menuSignupBtn, menuWelcomeBtn];
+  buttons.forEach(button => {
+    button.prop("disabled", false);
+    button.removeClass("disabled");
+  }) 
+  // menuLoginBtn.prop("disabled", false);
+  // menuSignupBtn.prop("disabled", false);
+  // menuWelcomeBtn.prop("disabled", false);
+}
+
+// Configurations Section 
 function selectSpaceShip(option){
   if (option == 1){
     $("#sp2").hide()
@@ -576,15 +660,44 @@ function selectSpaceShip(option){
   }
 }
 
+function clearConfigInputs(){
+  $("#sp1").show();
+  $("#sp2").show();
+  $("#sp3").show();
+  document.querySelector('input[type="color"]').value = colorInput;
+
+} 
+
+function restoreConfigDefaults(){
+  spaceShipOption = 2;
+  shootingKey = 32;
+  colorInput = "#FF0000";
+}
+
 
 function handleStartGame(){
   colorInput = document.querySelector('input[type="color"]').value;
   switch_displays("#game-section");
-  newGame()
+  newGame();
 }
 
-function handleKeyEnter(event) {
-  let key = event.keyCode;
-  shootingKey = key
-  
+function handleShootingKeyEnter(event) {
+  let keycode = event.keyCode;
+  console.log(keycode);
+  keyInput = $('#shootingKey-input');
+  if((keycode<65 || keycode>90) && keycode != 32 && keycode!=8){ //a-z or space are allowed
+    alert('Shooting key can be only alphabetic letter or space key');
+    keyInput.val('');
+    return;
+  }
+  if(keycode == 32){ // space key
+    keyInput.val('space');
+  }else if(keycode == 8) {//backspace key
+    keyInput.val('');
+    return;
+  }
+  else{
+    keyInput.val(event.key);
+  }
+  shootingKey = keycode;
 }
