@@ -1,42 +1,41 @@
 
+// Document Elements
 let canvas;
 let context;
 let playerImage;
+let enemyImage;
+// In-Game parameters
 let playerX;
 let playerY;
 let bulletX;
 let bulletY;
 let isShooting = false;
+let enemyIsShooting = false;
 let bulletRadius = 5;
 let enemies = [];
 let enemyDirection = "right";
 let bullets = [];
-let enemyImage;
-let enemySpeedInterval;
 let playerhit;
 let enemyhit;
-let bgsound;
-let gameTimer;
-let timeLeft;
-let gameTimerInterval;
 let gameOver;
-
-let gameRecords = [];
-let gameId = 1;
-
-
-// Game parameters
+// defaults parameters
 let enemySpeed = 1;
 let totalPoints = 0;
 let dy = 3;
-let lives = 3; 
-
-
+let lives = 3;
+// Sound and Time
+let bgsound;
+let gameTimer;
+let timeLeft;
+let enemySpeedInterval;
+let gameTimerInterval;
+// Records table
+let gameRecords = [];
+let gameId = 1;
 // Configurations parameters
 let spaceShipOption = 2;
 let colorInput = "#FF0000"; // red color
 let shootingKey = 32; //space key 
-
 
 // Menu buttons:
 let menuLoginBtn;
@@ -57,6 +56,7 @@ const users_passwords =[testUser, myUser];
 const all_registered_users = [];
 let loggedUser = "";
 
+// Game Initialization
 window.onload = setupGame;
 
 function setupGame() {
@@ -83,6 +83,10 @@ function newGame() {
     startAnimation();
     enemySpeedInterval = setInterval(increaseEnemySpeed, 5000); 
     gameTimerInterval = setInterval(updateTimeLeft,1000);
+}
+
+function startAnimation() {
+  window.requestAnimationFrame(updatePosition);
 }
 
 function newGameResetParams(){
@@ -114,6 +118,7 @@ function updateTimeLeft(){
   }
 
 // Game background sound Methods:
+
   function pauseSound() {
     if (typeof bgsound !== 'undefined' && !bgsound.paused) {
       bgsound.pause();
@@ -125,6 +130,8 @@ function updateTimeLeft(){
       bgsound.play();
     }
   }
+
+  // Game Elements generation functions:
 
 function generateEnemies() {
     let enemyWidth = 30;
@@ -174,7 +181,6 @@ function generateEnemies() {
     }
   }
 
-  let enemyIsShooting = false;
 
   function generateEnemyBullets() {
     let minBulletY = canvas.height;
@@ -233,6 +239,8 @@ function updateBulletPositions() {
   }
 }
 
+// End a game functionality section
+
 function endGame() {
   gameOver=true;
   showScoreResults();
@@ -246,6 +254,31 @@ function endGame() {
   let canvas = document.getElementById("theCanvas"); 
   canvas.style.display = "none";
 }
+
+function resetPlayerPosition() {
+  playerX = canvas.width / 2 - playerImage.width / 2;
+  playerY = canvas.height - playerImage.height;
+  context.drawImage(playerImage, playerX, playerY);
+  bullets = []
+}
+  
+  
+function resetElements() {
+  playerImage = new Image();
+  playerImage.src = `resources/images/airplane-${spaceShipOption}.png`;
+  playerImage.onload = function () {
+    playerX = canvas.width / 2 - playerImage.width / 2;
+    playerY = canvas.height - playerImage.height;
+    context.drawImage(playerImage, playerX, playerY);
+  };
+  enemies = [];
+  generateEnemies();
+  bullets = [];
+  totalPoints = 0;
+  lives = 3;
+}
+
+// Result Message and Records table presentation
 
 function showRecordsTable() {
    let tableBody = document.getElementById("recordsTableBody");
@@ -283,9 +316,9 @@ function showScoreResults(){
   resultMessage.text(message);
   resultScore.text('Your score: '+totalPoints);
   resultId.text('Game ID: '+ gameId);
-  // resultMessage.show();
 }
 
+// Helper function for showScoreResults
 function getResultMsg(){
 
     let message = "";
@@ -309,33 +342,58 @@ function getResultMsg(){
     return message;
 }
 
-function resetPlayerPosition() {
-  playerX = canvas.width / 2 - playerImage.width / 2;
-  playerY = canvas.height - playerImage.height;
-  context.drawImage(playerImage, playerX, playerY);
-  bullets = []
-}
-  
-  
-function resetElements() {
-  playerImage = new Image();
-  playerImage.src = `resources/images/airplane-${spaceShipOption}.png`;
-  playerImage.onload = function () {
-    playerX = canvas.width / 2 - playerImage.width / 2;
-    playerY = canvas.height - playerImage.height;
-    context.drawImage(playerImage, playerX, playerY);
-  };
-  enemies = [];
-  generateEnemies();
-  bullets = [];
-  totalPoints = 0;
-  lives = 3;
-}
+// Main Game Loop to frame animations on the canvas
+function updatePosition() {
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  if(gameOver){
+    return;
+  }
+  drawHearts(lives);
 
-function startAnimation() {
+  document.onkeydown = function(event) {
+    let cur_key = event.keyCode;
+    if (cur_key === 37) { // left arrow cur_key
+      if (playerX - 20 >= 0) {
+        playerX -= 20;
+      }
+    } else if (cur_key === 38) { // up arrow cur_key
+      if (playerY - 20 >= 0 && playerY > canvas.height * 0.6) {
+        playerY -= 20;
+      }
+    } else if (cur_key === 39) { // right arrow cur_key
+      if (playerX + playerImage.width + 20 <= canvas.width) {
+        playerX += 20;
+      }
+    } else if (cur_key === 40) { // down arrow cur_key
+      if (playerY + playerImage.height + 20 <= canvas.height) {
+        playerY += 20;
+      }
+    } else if (cur_key === shootingKey) { // shooting key
+      if (!isShooting) {
+        isShooting = true;
+        bulletX = playerX + playerImage.width / 2;
+        bulletY = playerY;
+        shootBullet();
+      }
+    }
+  };
+
+  generateEnemyBullets();
+  updateBulletPositions();
+  drawPoints();
+  drawTimer();
+
+  context.drawImage(playerImage, playerX, playerY);  
+  if (isShooting) {
+    drawBullet();
+    updateBulletPosition();
+  }
+  checkWinning();
+  updateEnemyPosition()
   window.requestAnimationFrame(updatePosition);
 }
 
+// Helper function for main game loop updatePosition()
 
 function updateEnemyPosition() {
   let maxX = 0;
@@ -390,56 +448,6 @@ function drawHearts(numHearts) {
 
 
 
-function updatePosition() {
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  if(gameOver){
-    return;
-  }
-  drawHearts(lives);
-
-  document.onkeydown = function(event) {
-    let cur_key = event.keyCode;
-    if (cur_key === 37) { // left arrow cur_key
-      if (playerX - 20 >= 0) {
-        playerX -= 20;
-      }
-    } else if (cur_key === 38) { // up arrow cur_key
-      if (playerY - 20 >= 0 && playerY > canvas.height * 0.6) {
-        playerY -= 20;
-      }
-    } else if (cur_key === 39) { // right arrow cur_key
-      if (playerX + playerImage.width + 20 <= canvas.width) {
-        playerX += 20;
-      }
-    } else if (cur_key === 40) { // down arrow cur_key
-      if (playerY + playerImage.height + 20 <= canvas.height) {
-        playerY += 20;
-      }
-    } else if (cur_key === shootingKey) { // shooting key
-      if (!isShooting) {
-        isShooting = true;
-        bulletX = playerX + playerImage.width / 2;
-        bulletY = playerY;
-        shootBullet();
-      }
-    }
-  };
-
-  generateEnemyBullets();
-  updateBulletPositions();
-  drawPoints();
-  drawTimer();
-
-  context.drawImage(playerImage, playerX, playerY);  
-  if (isShooting) {
-    drawBullet();
-    updateBulletPosition();
-  }
-  checkWinning();
-  updateEnemyPosition()
-  window.requestAnimationFrame(updatePosition);
-}
-
   
 function shootBullet() {
   context.beginPath();
@@ -468,6 +476,8 @@ function updateBulletPosition() {
   }
 }
 
+// Drawing elements on the canvas functions:
+
 function drawPoints(){
   let totalPointsText = "Points: " + totalPoints;
   context.fillStyle = "black";
@@ -494,7 +504,9 @@ function drawBullet() {
   context.fill();
 }
 
+// Navigation buttons handling: 
 
+// Primary function to switch screen and display dynamically 
 function switch_displays(switch_to_id){
     switch_displays_setup();
     sections_ids.forEach(section_id => {  
@@ -539,6 +551,12 @@ document.addEventListener("keydown", function(event) {
     event.preventDefault();
   }
 });});
+
+// Update user's chosen key to shoot in the about window
+function updateAboutShootingKey(){
+  let key = String.fromCharCode(shootingKey);
+  $('#aboutShootKey').text(key+' = Shoot');
+}
 
 // Login Handling methods:
 function handleLoginClick(){
@@ -585,7 +603,6 @@ $(document).ready(function() {
 const signupForm = document.getElementById("signup-form");
 signupForm.addEventListener("submit", (event) => {
   event.preventDefault(); // prevent the form from refreshing the page
-  // call your function to handle the form data here
 });
 });
 
@@ -609,6 +626,31 @@ function handleRegisterClick(){
   const new_user = {"full name":fullName, "username":username, "email": email, "date":date}
   successfulRegister(new_user, password);
 }
+
+function clearSignupInputs(){
+  const fullName = $('#signup-input-fullName');
+  const username = $('#signup-input-userName');
+  const email = $('#signup-input-email');
+  const date = $('#signup-input-date');
+  const password = $('#signup-input-password');
+  const passwordRepeat = $('#signup-input-passwordrepeat');
+  fullName.val('');
+  username.val('');
+  email.val('');
+  date.val('');
+  password.val('');
+  passwordRepeat.val('');
+}
+
+function successfulRegister(newUser, password){
+  all_registered_users.push(newUser);
+  userPassword = {"username": newUser.username, "password":password};
+  users_passwords.push(userPassword);
+  switch_displays("#login-section");
+  $('#successfulRegisterMsg').show();
+}
+
+// Validation of new user details :
 
 function validateNotEmpty(inputsArray){
   let isValid = true; 
@@ -661,28 +703,6 @@ function validatePassword(password, passwordRepeat){
   return true;
 }
 
-function clearSignupInputs(){
-  const fullName = $('#signup-input-fullName');
-  const username = $('#signup-input-userName');
-  const email = $('#signup-input-email');
-  const date = $('#signup-input-date');
-  const password = $('#signup-input-password');
-  const passwordRepeat = $('#signup-input-passwordrepeat');
-  fullName.val('');
-  username.val('');
-  email.val('');
-  date.val('');
-  password.val('');
-  passwordRepeat.val('');
-}
-
-function successfulRegister(newUser, password){
-  all_registered_users.push(newUser);
-  userPassword = {"username": newUser.username, "password":password};
-  users_passwords.push(userPassword);
-  switch_displays("#login-section");
-  $('#successfulRegisterMsg').show();
-}
 
 // Log out handling
 function logOut(){
@@ -696,16 +716,14 @@ function logOut(){
   switch_displays("#welcome-section");
 }
 
-//Methods for Menu button of : Home, log in, Sign up 
+//Methods for Menu buttons: Home, log in, Sign up 
+
 function disableMenuButtons(){
   buttons = [menuLoginBtn, menuSignupBtn, menuWelcomeBtn];
   buttons.forEach(button => {
     button.prop("disabled", true);
     button.addClass("disabled");
   }) 
-  // menuLoginBtn.prop("disabled", true);
-  // menuSignupBtn.prop("disabled", true);
-  // menuWelcomeBtn.prop("disabled", true);
 }
 
 function enableMenuButtons(){
@@ -714,12 +732,10 @@ function enableMenuButtons(){
     button.prop("disabled", false);
     button.removeClass("disabled");
   }) 
-  // menuLoginBtn.prop("disabled", false);
-  // menuSignupBtn.prop("disabled", false);
-  // menuWelcomeBtn.prop("disabled", false);
 }
 
 // Configurations Section 
+
 function selectSpaceShip(option){
   if (option == 1){
     $("#sp2").hide()
@@ -758,13 +774,13 @@ function restoreConfigDefaults(){
 
 function handleStartGame(){
   colorInput = document.querySelector('input[type="color"]').value;
-  // Value in minutes 
-  gameTimer = Number(document.querySelector('input[name="option"]:checked').value)*60;
+  gameTimer = Number(document.querySelector('input[name="option"]:checked').value)*60;   // time in seconds
   updateAboutShootingKey();
   switch_displays("#game-section");
   newGame();
 }
 
+// Handling configuring shooting by user preference on Configurations section
 function handleShootingKeyEnter(event) {
   let keycode = event.keyCode;
   keyInput = $('#shootingKey-input');
@@ -785,11 +801,9 @@ function handleShootingKeyEnter(event) {
   shootingKey = keycode;
 }
 
-function updateAboutShootingKey(){
-  let key = String.fromCharCode(shootingKey);
-  $('#aboutShootKey').text(key+' = Shoot');
-}
+// Helper functions - General 
 
+// Helper function to sort an array of arrays [[1,2],[3,5],...]
 function compareSecondElementDescending(a, b) {
   if (a[1] < b[1]) {
     return 1;
