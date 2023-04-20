@@ -19,12 +19,11 @@ let bgsound;
 let gameTimer;
 let timeLeft;
 let gameTimerInterval;
+let gameOver;
 
 let gameRecords = [];
 let gameId = 1;
 
-let requestIDs = [];
-// let animationFrameRequestId;
 
 // Game parameters
 let enemySpeed = 1;
@@ -61,13 +60,9 @@ let loggedUser = "";
 window.onload = setupGame;
 
 function setupGame() {
-  console.log("setupGame");
   switch_displays("#welcome-section");
   canvas = document.getElementById("theCanvas");
   context = canvas.getContext("2d");
-
-  // let startButton = document.getElementById("startButton");
-  // startButton.addEventListener("click", newGame, false);
 
   enemyImage = new Image();
   enemyImage.src = "resources/images/enemy.png";
@@ -78,14 +73,14 @@ function setupGame() {
 }
 
 function newGame() {
-    console.log("newGame");
-    // canvas.focus();
+    let canvas = document.getElementById("theCanvas"); 
+    canvas.style.display = "inline-block";
     $('#resultsDiv').hide();
     playSound();
     clearInterval(enemySpeedInterval)
     newGameResetParams();
     resetElements();
-    startTimer();
+    startAnimation();
     enemySpeedInterval = setInterval(increaseEnemySpeed, 5000); 
     gameTimerInterval = setInterval(updateTimeLeft,1000);
 }
@@ -96,24 +91,20 @@ function newGameResetParams(){
   dy = 3;
   lives = 3;
   timeLeft = gameTimer;
+  gameOver=false;
 }
 
 function updateTimeLeft(){
-  console.log("updateTimeLeft");
   if(timeLeft>0){
     timeLeft--;
-    console.log(timeLeft);
   }
   else{
-    console.log("stop timer");
     timeLeft = 0;
-    clearInterval(gameTimerInterval);
     endGame();
   }
 }
   
   function increaseEnemySpeed() {
-    console.log("enemyspeed: "+enemySpeed);
     if (enemySpeed >= 5)
       return
     enemySpeed += 1;
@@ -134,9 +125,6 @@ function updateTimeLeft(){
       bgsound.play();
     }
   }
-
-
-
 
 function generateEnemies() {
     let enemyWidth = 30;
@@ -181,7 +169,7 @@ function generateEnemies() {
   }
 
   function checkWinning(){
-    if (totalPoints == 250){
+    if (totalPoints >= 250 || enemies.length ==0){
         endGame();
     }
   }
@@ -246,14 +234,17 @@ function updateBulletPositions() {
 }
 
 function endGame() {
+  gameOver=true;
   showScoreResults();
   addRecord();
   gameId ++;
   showRecordsTable();
   resetElements();
+  clearInterval(gameTimerInterval);
   clearInterval(enemySpeedInterval);
-  stopTimer();
-  // newGame();
+  pauseSound();
+  let canvas = document.getElementById("theCanvas"); 
+  canvas.style.display = "none";
 }
 
 function showRecordsTable() {
@@ -312,9 +303,10 @@ function getResultMsg(){
       return message;
     }
     if(enemies.length == 0){
-      message += "Champion!"+ totalPoints;
+      message += "Champion!";
       return message;
     }
+    return message;
 }
 
 function resetPlayerPosition() {
@@ -326,7 +318,6 @@ function resetPlayerPosition() {
   
   
 function resetElements() {
-  console.log("resetElements");
   playerImage = new Image();
   playerImage.src = `resources/images/airplane-${spaceShipOption}.png`;
   playerImage.onload = function () {
@@ -341,22 +332,8 @@ function resetElements() {
   lives = 3;
 }
 
-function startTimer() {
-  console.log("startTimer");
-  let requestId = window.requestAnimationFrame(updatePosition);
-  requestIDs.push(requestId);
-  // console.log(animationFrameRequestId);
-}
-
-function stopTimer() {
-  console.log("stopTimer");
-  for (let id of requestIDs) {
-    // console.log(id);
-    window.cancelAnimationFrame(id);
-  }
-  requestIDs = [];
-  // window.cancelAnimationFrame(animationFrameRequestId);
-  // console.log(animationFrameRequestId);
+function startAnimation() {
+  window.requestAnimationFrame(updatePosition);
 }
 
 
@@ -415,7 +392,9 @@ function drawHearts(numHearts) {
 
 function updatePosition() {
   context.clearRect(0, 0, canvas.width, canvas.height);
-
+  if(gameOver){
+    return;
+  }
   drawHearts(lives);
 
   document.onkeydown = function(event) {
@@ -458,9 +437,7 @@ function updatePosition() {
   }
   checkWinning();
   updateEnemyPosition()
-  let requestId = window.requestAnimationFrame(updatePosition);
-  requestIDs.push(requestId);
-  // console.log(animationFrameRequestId);
+  window.requestAnimationFrame(updatePosition);
 }
 
   
@@ -503,7 +480,7 @@ function drawTimer(){
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
   let timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  let totalPointsText = "Time left: " + timeString;
+  let totalPointsText = "Time: " + timeString;
   context.fillStyle = "black";
   context.font = "bold 20px Arial";
   let textWidth = context.measureText(totalPointsText).width;
@@ -575,7 +552,7 @@ function handleLoginClick(){
         loginSuccessful = true;
         successfulLogin(user);
         loggedUser = usernameInput;
-        document.getElementById('welcomeUserMsg').textContent = 'welcome ' + loggedUser;
+        document.getElementById('welcomeUserMsg').textContent = 'Welcome ' + loggedUser;
 
         return;
       }
@@ -784,14 +761,12 @@ function handleStartGame(){
   // Value in minutes 
   gameTimer = Number(document.querySelector('input[name="option"]:checked').value)*60;
   updateAboutShootingKey();
-  console.log(gameTimer);
   switch_displays("#game-section");
   newGame();
 }
 
 function handleShootingKeyEnter(event) {
   let keycode = event.keyCode;
-  console.log(keycode);
   keyInput = $('#shootingKey-input');
   if((keycode<65 || keycode>90) && keycode != 32 && keycode!=8){ //a-z or space are allowed
     alert('Shooting key can be only alphabetic letter or space key');

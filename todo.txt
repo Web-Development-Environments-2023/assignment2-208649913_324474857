@@ -14,10 +14,9 @@ Fixes/Bugs:
 * Fix enablePropButtons function, currently not working
 * Fix show Welcome {user} message.
 
+
+
 Requirements 18.4:
-* Game Loop doesn't stop 
-* Fix about modal dialog window design
-* checkWinning() infinite loop
 
 
 Done:
@@ -33,4 +32,6 @@ Done:
 * Show Timer for the game
 * Add game time selection to config section 
 * update about content
+* Game Loop doesn't stop 
+* Fix about modal dialog window design
 
