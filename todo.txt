@@ -1,21 +1,3 @@
-Requirements:
-* Add config section - done => fix the key configuration
-* Overall design and UI of the game - done
-* Add Icon of the game - done
-* Check If new registed user can successfully log in 
-* Add implementations to About window (timer, instruction etc.)
-* Show score when the game is running - done
-* Add New Game option - done
-
-
-Fixes/Bugs:
-* fix navbar menu to top when scrolling
-* Fix About dialog exit on signin and sign up 
-* Fix enablePropButtons function, currently not working
-* Fix show Welcome {user} message.
-
-
-
 Requirements 18.4:
 
 
