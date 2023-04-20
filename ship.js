@@ -16,6 +16,12 @@ let enemySpeedInterval;
 let playerhit;
 let enemyhit;
 let bgsound;
+let gameTimer;
+let timeLeft;
+let gameTimerInterval;
+
+let gameRecords = [];
+let gameId = 1;
 
 let requestIDs = [];
 // let animationFrameRequestId;
@@ -47,7 +53,8 @@ $(document).ready(function() {
 // Users and Passwords managing letiables
 const sections_ids = ["#welcome-section", "#game-section", "#login-section", "#signup-section", "#config-section"]
 const testUser = {"username":"p","password":"testuser"};
-const users_passwords =[testUser];
+const myUser = {"username":"a","password":"a"};
+const users_passwords =[testUser, myUser];
 const all_registered_users = [];
 let loggedUser = "";
 
@@ -55,7 +62,7 @@ window.onload = setupGame;
 
 function setupGame() {
   console.log("setupGame");
-  // switch_displays("#welcome-section");
+  switch_displays("#welcome-section");
   canvas = document.getElementById("theCanvas");
   context = canvas.getContext("2d");
 
@@ -73,27 +80,46 @@ function setupGame() {
 function newGame() {
     console.log("newGame");
     // canvas.focus();
+    $('#resultsDiv').hide();
     playSound();
     clearInterval(enemySpeedInterval)
-    newGameRestoreDefaults();
+    newGameResetParams();
     resetElements();
     startTimer();
     enemySpeedInterval = setInterval(increaseEnemySpeed, 5000); 
+    gameTimerInterval = setInterval(updateTimeLeft,1000);
 }
 
-function newGameRestoreDefaults(){
+function newGameResetParams(){
   enemySpeed = 1;
   totalPoints = 0;
   dy = 3;
   lives = 3;
+  timeLeft = gameTimer;
+}
+
+function updateTimeLeft(){
+  console.log("updateTimeLeft");
+  if(timeLeft>0){
+    timeLeft--;
+    console.log(timeLeft);
+  }
+  else{
+    console.log("stop timer");
+    timeLeft = 0;
+    clearInterval(gameTimerInterval);
+    endGame();
+  }
 }
   
   function increaseEnemySpeed() {
     console.log("enemyspeed: "+enemySpeed);
-    if (enemySpeed >= 7)
+    if (enemySpeed >= 5)
       return
-    enemySpeed += 1.5; 
-    dy += 0.5
+    enemySpeed += 1;
+    if(dy<=5){
+      dy += 0.5
+    } 
   }
 
 // Game background sound Methods:
@@ -156,8 +182,7 @@ function generateEnemies() {
 
   function checkWinning(){
     if (totalPoints == 250){
-      alert("YOU WON!!!")
-      // newGame()
+        endGame();
     }
   }
 
@@ -221,13 +246,75 @@ function updateBulletPositions() {
 }
 
 function endGame() {
-  console.log("endGame");
-  alert("Game Over, points:  "+ totalPoints);
+  showScoreResults();
+  addRecord();
+  gameId ++;
+  showRecordsTable();
   resetElements();
   clearInterval(enemySpeedInterval);
   stopTimer();
   // newGame();
-  lives = 3;
+}
+
+function showRecordsTable() {
+   let tableBody = document.getElementById("recordsTableBody");
+   tableBody.innerHTML = '';
+   gameRecords.forEach(record => {
+    let gameId = record[0];
+    let score = record[1];
+    let rank = gameRecords.indexOf(record) + 1;
+    const row = document.createElement('tr');
+    const rankCell = document.createElement('td');
+    rankCell.textContent = rank;
+    const gameCell = document.createElement('td');
+    gameCell.textContent = gameId;
+    const scoreCell = document.createElement('td');
+    scoreCell.textContent = score;
+    row.appendChild(rankCell);
+    row.appendChild(gameCell);
+    row.appendChild(scoreCell);
+    tableBody.appendChild(row);
+   });
+   $('#resultsDiv').show();
+}
+
+function addRecord(){
+    record = [gameId, totalPoints];
+    gameRecords.push(record);
+    gameRecords.sort(compareSecondElementDescending);
+}
+
+function showScoreResults(){
+  let resultMessage = $('#resultMsg');
+  let resultScore = $('#resultScore');
+  let resultId = $('#resultId');
+  let message = getResultMsg();
+  resultMessage.text(message);
+  resultScore.text('Your score: '+totalPoints);
+  resultId.text('Game ID: '+ gameId);
+  // resultMessage.show();
+}
+
+function getResultMsg(){
+
+    let message = "";
+    if(lives == 0){
+      message += "You Lost";
+      return message ;
+    }
+    if(timeLeft==0){
+      if(totalPoints<100){
+        message += "You can do better";
+      }
+      else{
+        message += "Winner!";
+      }
+      return message;
+    }
+    if(enemies.length == 0){
+      message += "Champion!"+ totalPoints;
+      return message;
+    }
 }
 
 function resetPlayerPosition() {
@@ -250,6 +337,8 @@ function resetElements() {
   enemies = [];
   generateEnemies();
   bullets = [];
+  totalPoints = 0;
+  lives = 3;
 }
 
 function startTimer() {
@@ -262,7 +351,7 @@ function startTimer() {
 function stopTimer() {
   console.log("stopTimer");
   for (let id of requestIDs) {
-    console.log(id);
+    // console.log(id);
     window.cancelAnimationFrame(id);
   }
   requestIDs = [];
@@ -360,6 +449,7 @@ function updatePosition() {
   generateEnemyBullets();
   updateBulletPositions();
   drawPoints();
+  drawTimer();
 
   context.drawImage(playerImage, playerX, playerY);  
   if (isShooting) {
@@ -409,6 +499,17 @@ function drawPoints(){
   context.fillText(totalPointsText, canvas.width - textWidth - 10, 30);
 }
 
+function drawTimer(){
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  let timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  let totalPointsText = "Time left: " + timeString;
+  context.fillStyle = "black";
+  context.font = "bold 20px Arial";
+  let textWidth = context.measureText(totalPointsText).width;
+  context.fillText(totalPointsText, canvas.width - textWidth - 10, 50);
+}
+
 function drawBullet() {
   context.beginPath();
   context.fillStyle = colorInput;
@@ -444,7 +545,7 @@ function showAbout(){
 }
 
 function closeAbout() {
-  let overlay = document.getElementById("overlay")
+  let overlay = document.getElementById("overlay");
   let dialog = document.getElementById("dialog");
   overlay.style.display = "none";
   dialog.style.display = "none";
@@ -608,8 +709,11 @@ function successfulRegister(newUser, password){
 
 // Log out handling
 function logOut(){
+  endGame();
   loggedUser = "";
   $("#loggedUserOptions").hide();
+  $("#resultsDiv").hide();
+  gameRecords = [];
   enableMenuButtons();
   restoreConfigDefaults();
   switch_displays("#welcome-section");
@@ -677,6 +781,10 @@ function restoreConfigDefaults(){
 
 function handleStartGame(){
   colorInput = document.querySelector('input[type="color"]').value;
+  // Value in minutes 
+  gameTimer = Number(document.querySelector('input[name="option"]:checked').value)*60;
+  updateAboutShootingKey();
+  console.log(gameTimer);
   switch_displays("#game-section");
   newGame();
 }
@@ -700,4 +808,19 @@ function handleShootingKeyEnter(event) {
     keyInput.val(event.key);
   }
   shootingKey = keycode;
+}
+
+function updateAboutShootingKey(){
+  let key = String.fromCharCode(shootingKey);
+  $('#aboutShootKey').text(key+' = Shoot');
+}
+
+function compareSecondElementDescending(a, b) {
+  if (a[1] < b[1]) {
+    return 1;
+  } else if (a[1] > b[1]) {
+    return -1;
+  } else {
+    return 0;
+  }
 }

@@ -100,22 +100,28 @@
 <!-- About Modal Dialog  -->
    <div id="overlay" onclick="closeAbout()"></div>
    <div id="dialog">
-      <h3>This game was created by Eithan Markman and Ariel Dawidowicz</h3>
-      <h5>The game uses JQuery and MDB bootstap templates</h5>
+      <h5></h5>
       <h5>How to play? </h5>
-      <ul> 
-         <li><h6> Space = Shoot</h6></li>
+      <ul id="how-to-play"> 
+         <li><h6 id="aboutShootKey"> Space = Shoot</h6></li>
          <li><h6> &rarr; = Move right</h6></li>
          <li><h6> &larr; = Move left</h6></li>
          <li><h6> &uarr; = Move up</h6></li>
          <li><h6> &darr; = Move down</h6></li>
          
       </ul>
-      <button onclick="closeAbout()">Close</button>
+      <br/>
+      <h3>This game was created by Eithan Markman and Ariel Dawidowicz</h3>
+      <span> Creating the game was not easy we learned to work together on the code, and had to learn new technologies.</span>
+      <span> The game uses JQuery and MDB bootstap templates.</span>
+      <br/>
+      <br/>
+      <button class="btn btn-dark" onclick="closeAbout()">Close</button>
    </div>
 
    <!-- Game Screen -->
       <section id="game-section" style="background-image: url('resources/images/pagebg.png');">
+         <div class="h-100">
          <audio id = "playerhit" preload = "auto">
             <source src = "resources/audio/playerhit.mp3" type = "audio/mp3"></audio>
          <audio id = "enemyhit" preload = "auto">
@@ -131,24 +137,26 @@
                class="btn btn-success btn-block btn-lg text-body">New Game</button>
             </div>
          </div>
-         <div class="margin-top2-container">
+         <div id= "resultsDiv" class="margin-top2-container">
             <div class="centered"> 
-               <h4 id="resultMsg"> Game Number:  </h4>
-               <h4 id="resultMsg"> Result Message</h4>
+               <h5 id="resultMsg"> Result Message</h5>
+               <h5 id="resultScore"> Score</h5>
+               <h5 id="resultId">Game ID</h5>
                <table class="table">
                   <thead>
                     <tr>
                       <th scope="col">Score Rank</th>
-                      <th scope="col">Game Number</th>
+                      <th scope="col">Game ID</th>
                       <th scope="col">Score</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody id="recordsTableBody">
                      <!-- Dynamicaly appended rows of results -->
                   </tbody>
                 </table>
             </div>
-         </div>
+         </div>       
+      </div>
       </section>
       <!-- Sign Up  -->
       <section class="bg-image" id="signup-section"
@@ -279,10 +287,27 @@
 
                         <span>select bullet color</span><br/>
                            <input type="color"></input><bt/><br/><br/>
-
+                           <span>Select game duration </span><br/>
+                           <label>
+                           <input type="radio" name="option" value="2" checked>
+                           2 min
+                           </label>
+                           
+                           <label>
+                           <input type="radio" name="option" value="3">
+                           3 min
+                           </label>
+                           
+                           <label>
+                           <input type="radio" name="option" value="5">
+                           5 min
+                           </label>
+                           <br/>
+                           <br/>
                            <button type="button" onclick="handleStartGame()"
                            class="btn btn-success btn-block btn-lg text-body ">Start game</button>
-                     </div>
+   
+                        </div>
                   </div>
                </div>
                </div>
